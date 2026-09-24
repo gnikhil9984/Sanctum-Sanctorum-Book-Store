@@ -1,137 +1,84 @@
 # Sanctum Sanctorum — Members' Bookstore
 
-A small backend for a members-only clubhouse bookstore. Members can **buy** books and
-**borrow** them from the club library. The codebase is only partly finished. Your job is
-described in [ASSIGNMENT.md](ASSIGNMENT.md), and how the exercise runs — timeline, grading,
-Git, deployment and AI usage — is in [INSTRUCTIONS.md](INSTRUCTIONS.md).
+Sanctum Sanctorum is a members-only bookstore and lending library built with
+FastAPI. Members can browse books, place orders, borrow books, return loans,
+and view their activity and bookstore reports.
 
-## Quick start
+The project was completed as a backend engineering take-home assignment,
+with a small frontend served by the same FastAPI application.
 
-You do **not** need Python, `make`, or anything else installed first. The one tool to install is
-[uv](https://docs.astral.sh/uv/getting-started/installation/), which downloads the correct Python
-version and all dependencies for you.
+---
 
-### Step 1 — install uv
+## What the application does
 
-Pick the line for your system and run it in a terminal:
+The application handles two main workflows:
 
-```bash
-# macOS / Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+- Buying books through orders
+- Borrowing books through library loans
 
-```powershell
-# Windows (PowerShell)
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
+It also manages membership tiers, discounts, stock, loan limits, late fees,
+member statistics, and best-selling book reports.
 
-Then **close and reopen your terminal** so the updated `PATH` takes effect, and check it worked:
+---
 
-```
-uv --version
-```
+## Main Features
 
-If that prints a version number, you're set. If it says "command not found" or "not recognised",
-reopen the terminal again, or see uv's
-[installation guide](https://docs.astral.sh/uv/getting-started/installation/) for other options
-(Homebrew, winget, pipx, standalone installers).
+### Book Catalogue
 
-### Step 2 — run the project
+- Create and update books
+- Get a book by ID
+- Search by title or author
+- Filter restricted books
+- Filter by price range
+- Sort by title or price
+- Paginate book listings
+- Validate and normalize ISBN-13 values
+- Detect duplicate ISBNs
+- Validate stock and prices
 
-These commands are **the same on macOS, Linux and Windows**. Run them from the repository root
-(the folder containing `pyproject.toml`):
+### Members
 
-```
-uv sync                                  # install Python + dependencies (first time only)
-uv run pytest                            # run the test suite
-uv run uvicorn app.main:app --reload     # start the app
-```
+- Create members
+- Validate and normalize email addresses
+- Prevent duplicate member emails
+- Support four membership tiers:
+  - Apprentice
+  - Adept
+  - Master
+  - Supreme
+- View member orders
+- View member loans
+- View member statistics
 
-The first `uv sync` takes a minute while it downloads Python; after that everything is instant.
+### Orders
 
-- Web UI: http://localhost:8000
-- Interactive API docs (Swagger): http://localhost:8000/docs
-- The SQLite database (`sanctum.db`) is created and seeded on first start. To start fresh, stop the
-  app and delete that file (`rm sanctum.db`, or `Remove-Item sanctum.db` in PowerShell).
+- Create orders
+- Validate order items
+- Prevent duplicate books within an order
+- Check stock before creating an order
+- Reserve stock when an order is created
+- Apply membership-based discounts
+- Apply the bulk discount for orders with 10 or more items
+- Preserve the book price at the time of purchase
+- Pay pending orders
+- Cancel pending orders
+- Restore stock when an order is cancelled
 
-That's the whole setup. The sections below are optional alternatives — you don't need them.
+### Loans
 
-<details>
-<summary>Optional: shorter commands with <code>make</code></summary>
+- Borrow books
+- Apply membership-based loan limits
+- Restrict certain books to Master tier and above
+- Prevent duplicate active loans for the same book
+- Prevent borrowing when a member has overdue loans
+- Calculate loan due dates
+- Return books
+- Restore stock when a book is returned
+- Calculate late fees
+- Apply the late-fee cap based on the book price
 
-If you already have `make` (usually present on Linux; on macOS it comes with the Xcode command line
-tools, `xcode-select --install`; on Windows it is not installed by default), there's a `Makefile`
-with shortcuts:
+### Reports
 
-```bash
-make setup      # uv sync
-make test       # uv run pytest
-make run        # uv run uvicorn app.main:app --reload
-make reset-db   # rm -f sanctum.db
-```
+The application provides a best-selling-books report based on paid orders.
 
-These are only shortcuts for the `uv` commands above. If you don't have `make`, ignore this — don't
-install it just for this project.
-</details>
-
-<details>
-<summary>Optional: no uv? Use Python and pip directly (needs Python 3.10+)</summary>
-
-This route needs Python already installed. Check with `python3 --version` (macOS/Linux) or
-`py --version` (Windows); if it's missing or older than 3.10, install it from
-[python.org/downloads](https://www.python.org/downloads/) — or just use uv above, which handles it
-for you.
-
-```bash
-# macOS / Linux
-python3 -m venv .venv && source .venv/bin/activate
-pip install fastapi "uvicorn[standard]" "sqlalchemy>=2" "pydantic>=2" pytest httpx
-pytest
-uvicorn app.main:app --reload
-```
-
-```powershell
-# Windows (PowerShell)
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install fastapi "uvicorn[standard]" "sqlalchemy>=2" "pydantic>=2" pytest httpx
-pytest
-uvicorn app.main:app --reload
-```
-
-On Windows, if PowerShell blocks the activation script, either run
-`Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first, or use `.venv\Scripts\activate.bat`
-from `cmd.exe`. Remember to activate the virtual environment in every new terminal.
-</details>
-
-## Project layout
-
-```
-app/
-  main.py        app factory, error handlers, router wiring
-  db.py          engine, session, Base, get_db dependency
-  clock.py       get_now dependency (always use this for the current time)
-  models.py      SQLAlchemy models
-  schemas.py     Pydantic request/response models and validation
-  seed.py        demo data
-  routers/       HTTP layer (thin)
-  services/      business logic  <- most of your work is here
-frontend/        static UI served at /
-tests/           the test suite (your acceptance criteria)
-SPEC.md          the full API specification
-```
-
-## Running tests
-
-```
-uv run pytest                          # everything
-uv run pytest tests/test_orders.py     # one file
-uv run pytest -k late_fee -x           # by name, stop at first failure
-```
-
-(If you set the project up with pip instead of uv, drop the `uv run` prefix and just use `pytest`,
-with your virtual environment activated.)
-
-Each test gets a fresh in-memory database and a **frozen clock** (`clock.advance(days=15)`),
-so tests are fast and deterministic. Endpoints that haven't been built yet return
-`501 Not implemented`.
+GET /reports/top-books?limit=5
