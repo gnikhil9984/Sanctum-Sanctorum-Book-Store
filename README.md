@@ -1,23 +1,23 @@
 # Sanctum Sanctorum — Members' Bookstore
 
 Sanctum Sanctorum is a members-only bookstore and lending library built with
-FastAPI. Members can browse books, place orders, borrow books, return loans,
+FastAPI. Members can browse books, purchase books, borrow books, return loans,
 and view their activity and bookstore reports.
 
-The project was completed as a backend engineering take-home assignment,
-with a small frontend served by the same FastAPI application.
+The project was developed as a backend engineering take-home assignment with
+a small frontend served by the same FastAPI application.
 
 ---
 
 ## What the application does
 
-The application handles two main workflows:
+The application supports two main activities:
 
 - Buying books through orders
 - Borrowing books through library loans
 
 It also manages membership tiers, discounts, stock, loan limits, late fees,
-member statistics, and best-selling book reports.
+member statistics, and best-selling-book reports.
 
 ---
 
@@ -31,15 +31,15 @@ member statistics, and best-selling book reports.
 - Filter restricted books
 - Filter by price range
 - Sort by title or price
-- Paginate book listings
-- Validate and normalize ISBN-13 values
-- Detect duplicate ISBNs
-- Validate stock and prices
+- Pagination
+- ISBN-13 validation and normalization
+- Duplicate ISBN detection
+- Stock and price validation
 
 ### Members
 
 - Create members
-- Validate and normalize email addresses
+- Normalize and validate email addresses
 - Prevent duplicate member emails
 - Support four membership tiers:
   - Apprentice
@@ -54,12 +54,12 @@ member statistics, and best-selling book reports.
 
 - Create orders
 - Validate order items
-- Prevent duplicate books within an order
-- Check stock before creating an order
+- Prevent duplicate books in the same order
+- Check book stock before creating an order
 - Reserve stock when an order is created
-- Apply membership-based discounts
-- Apply the bulk discount for orders with 10 or more items
-- Preserve the book price at the time of purchase
+- Apply membership discounts
+- Apply the additional bulk discount for 10 or more items
+- Keep the original book price in the order
 - Pay pending orders
 - Cancel pending orders
 - Restore stock when an order is cancelled
@@ -81,4 +81,10 @@ member statistics, and best-selling book reports.
 
 The application provides a best-selling-books report based on paid orders.
 
-GET /reports/top-books?limit=5
+
+## Live Application
+
+The application is deployed and available at:
+
+https://sanctum-sanctorum-book-store.onrender.com
+
