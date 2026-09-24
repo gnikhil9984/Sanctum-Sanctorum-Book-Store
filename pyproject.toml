@@ -22,3 +22,7 @@ addopts = "-q"
 
 [tool.uv]
 package = false
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["frontend*", "tests*"]
