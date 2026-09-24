@@ -5,7 +5,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 COPY app ./app
 COPY frontend ./frontend
-COPY README.md SPEC.md ASSIGNMENT.md INSTRUCTIONS.md NOTES.md PROJECT_PHASES.md RUN_GUIDE.md ./
+COPY README.md SPEC.md ASSIGNMENT.md INSTRUCTIONS.md ./
 
 RUN pip install --no-cache-dir .
 
